@@ -18,30 +18,32 @@ public class LoadingView extends View {
     /**
      * 刷新时间
      */
-    private final int REFRASHTIME = 5;
+    private final int REFRASHTIME = 10;
     /**
      * 加速度
      */
-    private double ACELERATION = 1;
-    private double OFFSET = 1;
-    boolean flag = true;
+    private final double ACELERATION = 0.3;
+    private double OFFSET = 0.8;
     boolean start = true;
-    Random random = new Random();
-    int colorA = random.nextInt(256);
-    int colorR = random.nextInt(256);
-    int colorG = random.nextInt(256);
-    int colorB = random.nextInt(256);
-    int radiu;
-    double angle = 0;
-    int pointRadiu = 200;
+    int radius;
+    static int pointRadius = 50;
 
-
-    int dx = 0;
-    int dy = 0;
+    private static Paint paintGroup[] = {new Paint(), new Paint(), new Paint(), new Paint(), new Paint(), new Paint()};
+    private static int paintARGB[][] = {{255, 255, 168, 1}, {255, 255, 244, 1}, {255, 203, 255, 1}, {255, 89, 222, 157}, {255, 97, 157, 255}, {255, 209, 128, 254}};
+    private double angleGroup[] = {0, 0, 0, 0, 0, 0};
+    private boolean zeroGroup[] = {true, true, true, true, true, true};
+    private int xyGroup[][] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+    private double offsetGroup[] = {OFFSET, OFFSET, OFFSET, OFFSET, OFFSET, OFFSET};
     int x;
     int y;
 
-    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    static {
+        for (int i = 0; i < paintGroup.length; i++) {
+            paintGroup[i].setARGB(paintARGB[i][0], paintARGB[i][1], paintARGB[i][2], paintARGB[i][3]);
+            paintGroup[i].setStrokeWidth(pointRadius);
+            paintGroup[i].setStrokeCap(Paint.Cap.ROUND);
+        }
+    }
 
     public LoadingView(Context context) {
         super(context);
@@ -61,33 +63,48 @@ public class LoadingView extends View {
         x = getWidth() / 2;
         y = getHeight() / 2;
         if (x >= y)
-            radiu = y / 2;
+            radius = y / 2;
         else
-            radiu = x / 2;
+            radius = x / 2;
 
         if (start) {
-            dx = x - radiu;
-            dy = y;
+            for (int i = 0; i < xyGroup.length; i++) {
+                xyGroup[i][0] = x - radius;
+                xyGroup[i][1] = y;
+            }
             start = false;
         }
 
-        //初始化画笔
-        paint.setARGB(colorA, colorR, colorG, colorB);
-        paint.setStrokeWidth(pointRadiu);
-        paint.setStrokeCap(Paint.Cap.ROUND);
+        for (int i = paintGroup.length - 1; i >= 0; i--) {
+            paintGroup[i].setStrokeWidth(radius/3);
+                canvas.drawPoint(xyGroup[i][0], xyGroup[i][1], paintGroup[i]);
+        }
 
+        for (int i = 0; i < paintGroup.length; i++) {
+            if (zeroGroup[i]){
+                if (i == 0 || angleGroup[i - 1] >= 15) {
+                    xyGroup[i][0] = x - (int) (radius * Math.cos(Math.toRadians(angleGroup[i])));
+                    xyGroup[i][1] = y - (int) (radius * Math.sin(Math.toRadians(angleGroup[i])));
 
-        canvas.drawPoint(dx, dy, paint);
-        //自动回转
-//        dy = y - (int) (radiu * Math.sin(angle));
-//        dx = x - (int) (radiu * Math.cos(angle));
-//        OFFSET+=ACELERATION;
-//        angle += OFFSET;
-        dy = y - (int) (radiu * Math.sin(Math.toRadians(angle)));
-        dx = x - (int) (radiu * Math.cos(Math.toRadians(angle)));
+                    angleGroup[i] += offsetGroup[i];
+                    if (angleGroup[i] <= 180)
+                        offsetGroup[i] += ACELERATION;
+                    else
+                        offsetGroup[i] -= ACELERATION;
+                    if (angleGroup[i] >= 359&&angleGroup[angleGroup.length-1]<=359) {
+                        angleGroup[i] =360;
+                        offsetGroup[i] =360;
+                        zeroGroup[i]=false;
+                    }
+                    if(angleGroup[i] >= 359&&angleGroup[angleGroup.length-1]>359){
+                        angleGroup =new double[]{0,0,0,0,0,0};
+                        offsetGroup =new double[]{OFFSET,OFFSET,OFFSET,OFFSET,OFFSET,OFFSET};
+                        zeroGroup =new boolean[]{true, true, true, true, true, true};
+                    }
+                }
+            }
 
-        angle += 1;
-        if (angle == 359) angle = 0;
+        }
 
         postInvalidateDelayed(REFRASHTIME);
 
