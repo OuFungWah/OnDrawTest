@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RandomActivity"/>
+        <activity android:name=".CircleActivity"/>
     </application>
 
 </manifest>
