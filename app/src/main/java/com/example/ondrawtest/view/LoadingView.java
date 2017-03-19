@@ -18,12 +18,12 @@ public class LoadingView extends View {
     /**
      * 刷新时间
      */
-    private final int REFRASHTIME = 1;
+    private final int REFRASHTIME = 5;
     /**
      * 加速度
      */
-    private final int ACELERATION = 10;
-    private final int OFFSET=5;
+    private double ACELERATION = 1;
+    private double OFFSET = 1;
     boolean flag = true;
     boolean start = true;
     Random random = new Random();
@@ -32,8 +32,9 @@ public class LoadingView extends View {
     int colorG = random.nextInt(256);
     int colorB = random.nextInt(256);
     int radiu;
+    double angle = 0;
     int pointRadiu = 200;
-    int changeOffset = OFFSET;
+
 
     int dx = 0;
     int dy = 0;
@@ -59,10 +60,14 @@ public class LoadingView extends View {
         super.onDraw(canvas);
         x = getWidth() / 2;
         y = getHeight() / 2;
-        radiu = x / 2;
+        if (x >= y)
+            radiu = y / 2;
+        else
+            radiu = x / 2;
+
         if (start) {
-            dx = x-radiu;
-            dy=y;
+            dx = x - radiu;
+            dy = y;
             start = false;
         }
 
@@ -73,27 +78,18 @@ public class LoadingView extends View {
 
 
         canvas.drawPoint(dx, dy, paint);
-        if (flag) {
-            if (dy >= y-radiu) {
-                dy -= changeOffset;
-                dx = x - (int) Math.sqrt(Math.pow(radiu, 2) - Math.pow(dy-y, 2));
-            } else {
-                dy += changeOffset;
-                dx = (int) Math.sqrt(Math.pow(radiu, 2) - Math.pow(dy-y, 2)) + x;
-                flag = false;
-            }
-        } else {
-            if (dy <= y+radiu) {
-                dy += changeOffset;
-                dx = (int) Math.sqrt(Math.pow(radiu, 2) - Math.pow(dy-y, 2)) + x;
-            } else {
-                dy -= changeOffset;
-                dx = x - (int) Math.sqrt(Math.pow(radiu, 2) - Math.pow(dy-y, 2));
-                flag = true;
-            }
-        }
+        //自动回转
+//        dy = y - (int) (radiu * Math.sin(angle));
+//        dx = x - (int) (radiu * Math.cos(angle));
+//        OFFSET+=ACELERATION;
+//        angle += OFFSET;
+        dy = y - (int) (radiu * Math.sin(Math.toRadians(angle)));
+        dx = x - (int) (radiu * Math.cos(Math.toRadians(angle)));
+
+        angle += 1;
+        if (angle == 359) angle = 0;
+
         postInvalidateDelayed(REFRASHTIME);
+
     }
-
-
 }
