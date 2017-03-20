@@ -21,4 +21,16 @@
         android:layout_height="wrap_content"
         android:text="环形"/>
 
+    <Button
+        android:id="@+id/bezier_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DoubleBezier"/>
+
+    <Button
+        android:id="@+id/triple_bezier_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TripleBezier"/>
+
 </LinearLayout>

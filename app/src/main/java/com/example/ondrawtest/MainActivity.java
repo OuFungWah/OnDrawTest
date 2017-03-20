@@ -10,6 +10,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button randomBtn;
     private Button circleBtn;
+    private Button bezierBtn;
+    private Button tripleBezierBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,22 +20,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         randomBtn=(Button)findViewById(R.id.random_color_btn);
         circleBtn=(Button)findViewById(R.id.circle_btn);
+        bezierBtn= (Button)findViewById(R.id.bezier_btn);
+        tripleBezierBtn= (Button)findViewById(R.id.triple_bezier_btn) ;
         randomBtn.setOnClickListener(this);
         circleBtn.setOnClickListener(this);
+        bezierBtn.setOnClickListener(this);
+        tripleBezierBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.random_color_btn:
-                Intent i = new Intent(MainActivity.this,RandomActivity.class);
-                startActivity(i);
+                startActivity(new Intent(MainActivity.this,RandomActivity.class));
                 break;
             case R.id.circle_btn:
-                Intent i1 = new Intent(MainActivity.this,CircleActivity.class);
-                startActivity(i1);
+                startActivity(new Intent(MainActivity.this,CircleActivity.class));
                 break;
-
+            case R.id.bezier_btn:
+                startActivity(new Intent(MainActivity.this,DoubleBezierActivity.class));
+                break;
+            case R.id.triple_bezier_btn:
+                startActivity(new Intent(MainActivity.this,TripleBezierActivity.class));
+                break;
         }
     }
 }
